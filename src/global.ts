@@ -1,4 +1,5 @@
-import { v4 } from "uuid";
+import { IncomingMessage, ServerResponse } from "http";
+import { v4, validate } from "uuid";
 
 type User = {
   id: string;
@@ -33,6 +34,37 @@ export async function addUser(req: any, res: any) {
   } catch (e) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({message: 'Нет обязательных полей'}));
+  };
+}
+
+export async function getUserById(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const reqId: string = req.url.slice(11);
+    if (!validate(reqId)) {
+      throw new Error('400');
+    };
+    const userArray: User[] = users.filter((user: User) => {
+      return user.id === reqId;
+    });
+    if (userArray.length == 0) {
+      throw new Error('404');
+    };
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(userArray[0]));
+  } catch (e) {
+    switch (e.message) {
+      case '400':
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({message: 'Неверный идентификатор'}));
+        break;
+      case '404':
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({message: 'Такого пользователя нет'}));
+        break;
+      default:
+        break;
+    }    
   };
 }
 
