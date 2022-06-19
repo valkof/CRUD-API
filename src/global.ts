@@ -68,6 +68,43 @@ export async function getUserById(req: IncomingMessage, res: ServerResponse) {
   };
 }
 
+export async function updateUser(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const reqId: string = req.url.slice(11);
+    if (!validate(reqId)) {
+      throw new Error('400');
+    };
+    const userNum: number = users.findIndex((user: User) => {
+      return user.id === reqId;
+    });
+    if (userNum < 0) {
+      throw new Error('404');
+    };
+
+    const body = await getBodyResponse(req);
+    const {username, age, hobbies} = JSON.parse(body);
+    if (username) users[userNum].username = username;
+    if (age) users[userNum].age = age;
+    if (hobbies) users[userNum].hobbies = hobbies;
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(users[userNum]));
+  } catch (e) {
+    switch (e.message) {
+      case '400':
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({message: 'Неверный идентификатор'}));
+        break;
+      case '404':
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({message: 'Такого пользователя нет'}));
+        break;
+      default:
+        break;
+    }    
+  };
+}
+
 async function getBodyResponse(req: any): Promise<string> {
   return new Promise((resolve: any, reject: any) => {
     try {
