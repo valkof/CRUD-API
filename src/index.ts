@@ -3,7 +3,7 @@ import { env } from "process";
 import 'dotenv/config';
 import { addUser, deleteUser, getAllUsers, getUserById, updateUser } from "./global";
 
-const server = createServer((req: IncomingMessage, res: ServerResponse) => {
+export const server = createServer((req: IncomingMessage, res: ServerResponse) => {
   if (req.url === '/api/users' && req.method === 'GET') {
     getAllUsers(req, res);
   } else if (req.url === '/api/users' && req.method === 'POST') {

@@ -121,7 +121,7 @@ export async function deleteUser(req: IncomingMessage, res: ServerResponse) {
     users.splice(userNum, 1);
 
     res.writeHead(204, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({message: `Пользователь ${reqId} удален`}));
+    //res.end(JSON.stringify({message: `Пользователь ${reqId} удален`}));
   } catch (e) {
     switch (e.message) {
       case '400':
