@@ -1,7 +1,7 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import { env } from "process";
 import 'dotenv/config';
-import { addUser, getAllUsers, getUserById, updateUser } from "./global";
+import { addUser, deleteUser, getAllUsers, getUserById, updateUser } from "./global";
 
 const server = createServer((req: IncomingMessage, res: ServerResponse) => {
   if (req.url === '/api/users' && req.method === 'GET') {
@@ -12,6 +12,8 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     getUserById(req, res);
   } else if (req.url.startsWith('/api/users/') && req.method === 'PUT') {
     updateUser(req, res);
+  } else if (req.url.startsWith('/api/users/') && req.method === 'DELETE') {
+    deleteUser(req, res);
   } else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({message: 'Неверный запрос'}));
